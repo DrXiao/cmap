@@ -22,6 +22,9 @@ build: $(OBJ) main.$(EXEC_FORMAT)
 test1: $(OBJ) test1.$(EXEC_FORMAT) 
 	./test1.$(EXEC_FORMAT) < test/test.in
 
+test2: $(OBJ) test2.$(EXEC_FORMAT)
+	./test2.$(EXEC_FORMAT) < test/test.in
+
 clean:
 	$(RM) -rf $(OBJ)
 	$(RM) *.$(EXEC_FORMAT)

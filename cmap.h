@@ -35,5 +35,6 @@ void *cmap_alloc(int (*)(const void *, const void *),
     			 size_t (*)(const void *),
     			 size_t (*)(const void *));
 
+void cmap_validate(cmap_t *);
 
 #endif

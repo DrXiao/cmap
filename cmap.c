@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -36,6 +37,12 @@ static struct cmap_node nil_node = {.black = true,
                     		        .parent = NIL,
                                     .left = NIL,
                                    	.right = NIL};
+
+void cmap_node_free(struct cmap_node *node) {
+	free(node->key);
+	free(node->val);
+	free(node);
+}
 
 
 void cmap_root_init(cmap_t *map) {
@@ -105,9 +112,9 @@ void cmap_right_rotation(cmap_t *map, struct cmap_node *node) {
 }
 
 void cmap_insert_fixup(cmap_t *map, struct cmap_node *node) {
-	while (!node->parent->black){
+	while (node->parent->black == false){
 		struct cmap_node *parent = node->parent;
-		struct cmap_node *grandparent = node->parent->parent;
+		struct cmap_node *grandparent = parent->parent;
 		struct cmap_node *uncle = NIL;
 		
 		if (parent == grandparent->left) {
@@ -117,17 +124,18 @@ void cmap_insert_fixup(cmap_t *map, struct cmap_node *node) {
 			uncle = grandparent->left;
 		}
 	
-		if (!uncle->black) {
+		if (uncle->black == false) {
 			parent->black = true;
 			uncle->black = true;
 			grandparent->black = false;
 			node = grandparent;
 		}
 		else if(parent == grandparent->left) {
-			
 			if (node == parent->right){
 				node = parent;
 				cmap_left_rotation(map, node);
+				parent = node->parent;
+				grandparent = parent->parent;
 			}
 			parent->black = true;
 			grandparent->black = false;
@@ -135,9 +143,11 @@ void cmap_insert_fixup(cmap_t *map, struct cmap_node *node) {
 		}
 		
 		else {
-			if (parent == grandparent->left){
+			if (node == parent->left){
 				node = parent;
 				cmap_right_rotation(map, node);
+				parent = node->parent;
+				grandparent = parent->parent;
 			}
 			parent->black = true;
 			grandparent->black = false;
@@ -179,17 +189,105 @@ void cmap_insert(cmap_t *map, const void *key, const void *val) {
 	cmap_insert_fixup(map, new_node);
 }
 
+void cmap_erase_fixup(cmap_t *map, struct cmap_node *node) {
+	while (node != map->root && node->black) {
+		struct cmap_node *parent = node->parent;
+		bool node_is_left = (node == parent->left);
+		struct cmap_node *sibling = (node_is_left) ? parent->right : parent->left; 
+		if (sibling->black == false) {
+			sibling->black = true;
+			node->parent->black = false;
+			if (node_is_left) {
+				cmap_left_rotation(map, parent);
+				sibling = parent->right;
+			}
+			else {
+				cmap_right_rotation(map, parent);
+				sibling = parent->left;
+			}
+
+			if (sibling->black) {
+				if(sibling->left->black && sibling->right->black) {
+					sibling->black = false;
+					node = parent;
+				}
+				else if (node_is_left) {
+					if (sibling->left->black == false && sibling->right->black){
+						sibling->black = false;
+						sibling->left->black = true;
+						cmap_right_rotation(map, sibling);
+					}
+					if (sibling->right->black == false) {
+						sibling->black = parent->black;
+						parent->black = true;
+						sibling->right->black = true;
+						cmap_left_rotation(map, parent);
+						node = map->root;
+					}
+				}
+				else {
+					if (sibling->right->black == false && sibling->left->black){
+						sibling->black = false;
+						sibling->right->black = true;
+						cmap_left_rotation(map, sibling);
+					}
+					if (sibling->left->black == false) {
+						sibling->black = parent->black;
+						parent->black = true;
+						sibling->left->black = true;
+						cmap_right_rotation(map, parent);
+						node = map->root;
+					}
+				}
+			}
+		}
+
+	}
+	map->root->black = true;
+}
+
+struct cmap_node *cmap_node_successor(cmap_t *map, struct cmap_node *node) {
+	struct cmap_node *successor = node->right;
+	while (successor->left != NIL)
+		successor = successor->left;
+	return successor;
+}
+
+// TODO: Now this function can cause an infinte loop.
 bool cmap_erase(cmap_t *map, const void *key) {
-    return 0;
+	struct cmap_node **cursor = &map->root;
+	while(*cursor != NIL) {
+		int cmp = map->cmp((*cursor)->key, key);
+        if (cmp == 0) {
+			bool erase_black = (*cursor)->black;
+			struct cmap_node *successor = cmap_node_successor(map, (*cursor));
+			
+			if (successor != NIL) {
+				successor->parent = (*cursor)->parent;
+				successor->left = (*cursor)->left;
+				successor->right = (*cursor)->right;
+			}
+			cmap_node_free(*cursor);
+			*cursor = successor;
+			if (erase_black) {
+				printf("Fixup\n");
+				cmap_erase_fixup(map, *cursor);
+			}
+			return true;
+		}
+        else if (cmp < 0)
+            cursor = &(*cursor)->right;
+        else
+            cursor = &(*cursor)->left;
+	}
+    return false;
 }
 
 void cmap_node_destroy(struct cmap_node *node) {
 	if (node != NIL) {
 		cmap_node_destroy(node->left);
 		cmap_node_destroy(node->right);
-		free(node->key);
-		free(node->val);
-		free(node);
+		cmap_node_free(node);
 	}
 }
 
@@ -208,3 +306,29 @@ void *cmap_alloc(int (*cmp)(const void *, const void *),
 	memcpy(alloc_map, &map, sizeof(cmap_t));
 	return alloc_map;
 }
+
+int cmap_postorder(struct cmap_node *node) {
+	int leftpath = 0, rightpath = 0;
+	if (node != NIL) {
+		if (node->black == false && (node->left->black == false || node->right->black == false)) {
+			fprintf(stderr, "A red node has a least one red child node\n");
+			exit(0);
+		}
+		leftpath = cmap_postorder(node->left);
+		rightpath = cmap_postorder(node->right);
+		if (leftpath != rightpath) {
+			fprintf(stderr, "The length of the left path is inequal to the right path.\n");
+			exit(0);
+		}
+	}
+	return leftpath + node->black;
+}
+
+void cmap_validate(cmap_t *map) {
+	if (map->root->black == false) {
+		fprintf(stderr, "The root's color of the cmap is not black\n");
+		exit(0);
+	}
+	cmap_postorder(map->root);
+}
+
