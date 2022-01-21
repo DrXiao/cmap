@@ -8,7 +8,7 @@
 
 ## Usage
 * Before using cmap, you have to define the three functions with the specific types by yourself.
-```c=
+```c
 // A comparator for keys of Red-Black Tree.
 int cmp(const void *key1, const void *key2) {
 	/* return -1, 0, 1. */;
@@ -31,7 +31,7 @@ size_t val_size_get(const void *val) {
 ['test/main.c'](test/main.c)
 
 ## Methods of cmap.
-```
+```c
 void *(*const search)(cmap_t *, const void *);
 void (*const insert)(cmap_t *, const void *, const void *);
 bool (*const erase)(cmap_t *, const void *);
