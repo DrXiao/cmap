@@ -1,5 +1,6 @@
-# CMAP: An associative array implemented by C laugnage.
-* This is an implementation of an associative array written by C. it is similar as C++ ```<map>``` but it is implemented by C; thus, this repo calls it **cmap** (C + <map>).
+# C Map
+## An associative array implemented by C laugnage.
+* This is an implementation of an associative array written by C. it is similar as C++ ```<map>``` but it is implemented by C; thus, this repo calls it **cmap** (C++ <map>).
 
 ## Implementation
 * The goal of this repo is providing a binary search tree for the programmers using C language to work on thier projects. But, here is only a simple implementation of **Red-Black Tree**, which is known as a **self-balancing binary search tree**, and hopes it can be a helpful data structure for the projects written by C language.
