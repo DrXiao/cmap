@@ -28,7 +28,7 @@ size_t val_size_get(const void *val) {
 
 ### Example for using cmap.
 
-['test/main.c'](test/main.c)
+[test/main.c](test/main.c)
 
 ## Methods of cmap.
 ```c
@@ -42,7 +42,7 @@ void (*destroy)(cmap_t *);
 * Other operators about Red-Black Tree.
 
 ## Build
-1. A simple test file: ['test/main.c'](test/main.c)
+1. A simple test file: [test/main.c](test/main.c)
 	* This shows how to construct and use a cmap, and some of details has been descripted above.
 	* In this case, The types of key and value of cmap are C string and integer, respectively.
 ```
@@ -50,9 +50,9 @@ make build
 ./main
 ```
 
-2. A test file to test Red-Black Tree: ['test/test1.c'](test/test1.c)
-	* This program also test a cmap, whose types is identified as the cmap in ['test/main.c'](test/main.c)
-	* There has twelve nodes constructed by the program and input some test data from ['test/test.in'](test/test.in) to search the cmap and get the corresponding value.
+2. A test file to test Red-Black Tree: [test/test1.c](test/test1.c)
+	* This program also test a cmap, whose types is identified as the cmap in [test/main.c](test/main.c)
+	* There has twelve nodes constructed by the program and input some test data from [test/test.in](test/test.in) to search the cmap and get the corresponding value.
 ```
 make test1
 ```
