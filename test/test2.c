@@ -37,14 +37,12 @@ struct tuple {
 int main(void) {
 
 	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
-	cmap_root_init(&map);
-
+	
 	char buf[1024];
 	
 	for (int i = 0; i < sizeof(tuples)/sizeof(struct tuple); i++) {
 		printf("Insert (%s, %d)\n", tuples[i].key, tuples[i].val);
 		map.insert(&map, tuples[i].key, &tuples[i].val);
-		cmap_validate(&map);	
 	}
 	
 	printf("Searching...\n");

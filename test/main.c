@@ -18,8 +18,7 @@ size_t val_size_get(const void *val) {
 int main(void) {
 
 	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
-	cmap_root_init(&map);
-	
+		
 	int val = 10;
 	map.insert(&map, "Hello", &val);
 	val = 20;
