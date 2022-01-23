@@ -20,17 +20,17 @@ struct tuple {
 	char key[1024];
 	int val;
 } tuples[] = {{"Hello", 10},
-			  {"Linux", 20},
-			  {"World", 30},
-			  {"Everything is a file", 40},
-			  {"Seamphore", -100},
-			  {"Mutex", 40},
-			  {"Spinlock", (int)1e9},
-			  {"Arch Linux", 404},
-			  {"Ubuntu Linux", 200},
-			  {"Debian Linux", 204},
-			  {"AAA", 30},
-			  {"BBB", 50}};
+	      {"Linux", 20},
+	      {"World", 30},
+	      {"Everything is a file", 40},
+	      {"Seamphore", -100},
+	      {"Mutex", 40},
+	      {"Spinlock", (int)1e9},
+	      {"Arch Linux", 404},
+	      {"Ubuntu Linux", 200},
+	      {"Debian Linux", 204},
+	      {"AAA", 30},
+	      {"BBB", 50}};
 
 int main(void) {
 
