@@ -18,7 +18,7 @@ size_t val_size_get(const void *val) {
 int main(void) {
 
 	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
-		
+
 	int val = 10;
 	map.insert(&map, "Hello", &val);
 	val = 20;
@@ -26,7 +26,7 @@ int main(void) {
 	printf("%d\n", *(int *)map.search(&map, "World"));
 
 	map.destroy(&map);
-	
+
 	cmap_t *alloc_map = cmap_alloc(cmp, key_size_get, val_size_get);
 
 	printf("%p\n", alloc_map->search(alloc_map, "Hello"));

@@ -19,32 +19,30 @@ size_t val_size_get(const void *val) {
 struct tuple {
 	char key[1024];
 	int val;
-} tuples[] = {
-	{"Hello", 10},
-	{"Linux", 20},
-	{"World", 30},
-	{"Everything is a file", 40},
-	{"Seamphore", -100},
-	{"Mutex", 40},
-	{"Spinlock", (int)1e9},
-	{"Arch Linux", 404},
-	{"Ubuntu Linux", 200},
-	{"Debian Linux", 204},
-	{"AAA", 30},
-	{"BBB", 50}
-};
+} tuples[] = {{"Hello", 10},
+			  {"Linux", 20},
+			  {"World", 30},
+			  {"Everything is a file", 40},
+			  {"Seamphore", -100},
+			  {"Mutex", 40},
+			  {"Spinlock", (int)1e9},
+			  {"Arch Linux", 404},
+			  {"Ubuntu Linux", 200},
+			  {"Debian Linux", 204},
+			  {"AAA", 30},
+			  {"BBB", 50}};
 
 int main(void) {
 
 	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
-	
+
 	char buf[1024];
-	
-	for (int i = 0; i < sizeof(tuples)/sizeof(struct tuple); i++) {
+
+	for (int i = 0; i < sizeof(tuples) / sizeof(struct tuple); i++) {
 		printf("Insert (%s, %d)\n", tuples[i].key, tuples[i].val);
 		map.insert(&map, tuples[i].key, &tuples[i].val);
 	}
-	
+
 	printf("Searching...\n");
 	while (fgets(buf, sizeof(buf), stdin) != NULL) {
 		buf[strlen(buf) - 1] = '\0';

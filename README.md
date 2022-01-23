@@ -35,7 +35,7 @@ size_t val_size_get(const void *val) {
 void *(*const search)(cmap_t *, const void *);
 void (*const insert)(cmap_t *, const void *, const void *);
 bool (*const erase)(cmap_t *, const void *);
-void (*destroy)(cmap_t *);
+void (*const destroy)(cmap_t *);
 ```
 ### TODO
 * ```erase``` is incomplete (It causes infinite loop.), and others are finished but can be improved more efficient.
