@@ -12,7 +12,7 @@
 // A comparator for keys of Red-Black Tree.
 int cmp(const void *key1, const void *key2) {
 	/* return negative value, zero, positive value. */;
-	/* You may understant this quickly if you had used qsort in your C projects. */
+	/* You may understand this quickly if you had used qsort in your C projects. */
 }
 
 // A function for getting the memory size of key.
