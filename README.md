@@ -46,27 +46,36 @@ void (*const destroy)(cmap_t *);
 * Other operators about Red-Black Tree.
 
 ## Build
+### Simple test files
 1. A simple test file: [test/main.c](test/main.c)
 	* This shows how to construct and use a cmap, and some of details has been descripted above.
 	* In this case, The types of key and value of the cmap are C string and integer, respectively.
 ```
-make build
-./main
+$ make main
 ```
-
 2. Test the insertion of the cmap: [test/test1.c](test/test1.c)
 	* This program also test a cmap, whose types is identified as the cmap in [test/main.c](test/main.c)
 	* There has twelve nodes constructed by the program and input some test data from [test/test.in](test/test.in) to search the cmap and get the corresponding value.
 ```
-make test1
+$ make test1
 ```
-
 3. Test the erasion of the cmap: [test/test2.c](test/test2.c) (TODO)
 	* The types of the cmap is also identified as the above tests.
 	* It also has several ndoes and uses erase() method to test its the behavior.
 ```
-make test2
+$ make test2
+```
+* All of the above make targets will execute their binary executables automatically.
+
+### Complex test files
+* (To be continued)
+
+### Create library (shared object)
+* You can use the cmap by compiling its shared object to your binary exectuable, so here provides a target in makefile to create the shared object in a folder called ```bin```.
+* This target is set by deafult and It also puts the cmap.h in the folder.
+```
+$ make
+or
+$ make build
 ```
 
-## Better usage
-* (To be continued...)

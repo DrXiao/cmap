@@ -3,40 +3,43 @@ CC := c99
 CFLAG = -g -O0 -Wall
 EXEC_FORMAT := elf
 SRC_DIR := src
-OBJ := obj
 INCLUDE_DIR := include
 TEST_DIR := test
+
+BIN := bin
 
 # OS env
 RM := rm
 MKDIR := mkdir
+FIND := find
+CP := cp
 
-# DEPS = $(patsubst %.c, %.o, $(wildcard *.c))
-DEPS = $(patsubst %.c, $(OBJ)/%.o, $(wildcard *.c))
+build: $(BIN) $(BIN)/libcmap.so
+	$(CP) cmap.h $(BIN)/
+	
+main: main.$(EXEC_FORMAT)
+	./main.$(EXEC_FORMAT)
 
-.SECONDARY: 
-	$(OBJ)/%.o
-
-build: $(OBJ) main.$(EXEC_FORMAT)
-
-test1: $(OBJ) test1.$(EXEC_FORMAT) 
+test1: test1.$(EXEC_FORMAT) 
 	./test1.$(EXEC_FORMAT) < test/test.in
 
-test2: $(OBJ) test2.$(EXEC_FORMAT)
+test2: test2.$(EXEC_FORMAT)
 	./test2.$(EXEC_FORMAT) < test/test.in
 
 clean:
-	$(RM) -rf $(OBJ)
-	$(RM) *.$(EXEC_FORMAT)
+	$(FIND) ./ -type f -name *.$(EXEC_FORMAT) -exec $(RM) {} \;
 
-%.$(EXEC_FORMAT): $(OBJ)/cmap.o $(OBJ)/%.o
+$(BIN)/libcmap.so: cmap.c
+	$(CC) -shared -fPIC -o $@ $^
+
+%.$(EXEC_FORMAT): cmap.o %.o
 	$(CC) $(CFLAG) -o $@ $^
 
-$(OBJ)/%.o: %.c
-	$(CC) $(CFLAG) -o $@ $^ -c -I./
+%.o: %.c
+	$(CC) -c $(CFLAG) -o $@ $^ -I./
 
-$(OBJ)/%.o: $(TEST_DIR)/%.c
-	$(CC) $(CFLAG) -o $@ $^ -c -I./
+%.o: $(TEST_DIR)/%.c
+	$(CC) -c $(CFLAG) -o $@ $^ -I./
 
-$(OBJ):
+$(BIN):
 	$(MKDIR) $@
