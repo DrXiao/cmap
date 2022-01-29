@@ -9,19 +9,19 @@
 
 /*
  * C map - 	An associative array implemented by C language.
- *			In C++, it is called 'map', so this implementation
- *			is called as 'C map' because it is written by C.
+ *		In C++, it is called 'map', so this implementation
+ *		is called as 'C map' because it is written by C.
  *
- *			This is also implemented by Red-Black Tree.
+ *		This is also implemented by Red-Black Tree.
  *
  * Rules of Red-Black Tree (RBT).
  * 1. 	Each node of RBT has its color (black or red).
  * 2. 	The root must be black.
  * 3. 	The leafs are black (NIL).
  * 4. 	If a certain node is red, its two children must be black.
- *		That is, There cannot link two red nodes directly.
+ *	That is, There cannot link two red nodes directly.
  * 5.	Starting from any node, the path between the start and any descendant
- *		leaf must have the same number of black nodes.
+ *	leaf must have the same number of black nodes.
  * */
 
 struct cmap_node {
@@ -237,7 +237,7 @@ INSERT_END:
 }
 
 static void cmap_erase_fixup(cmap_t *map, struct cmap_node *node) {
-		
+	
 	while (node != map->root && node->black) {
 		struct cmap_node *parent = node->parent;
 		bool node_is_left = (node == parent->left);
@@ -255,42 +255,38 @@ static void cmap_erase_fixup(cmap_t *map, struct cmap_node *node) {
 				sibling = parent->left;
 			}
 		}
-		else {
-			if (sibling->left->black && sibling->right->black) {
+		if (sibling->left->black && sibling->right->black) {
+			sibling->black = false;
+			node = parent;
+		}
+		else if (node_is_left) {
+			if (sibling->right->black) {
 				sibling->black = false;
-				node = parent;
-			}
-			else if (node_is_left) {
-				if (sibling->left->black == false &&
-				    sibling->right->black) {
-					sibling->black = false;
-					sibling->left->black = true;
-					cmap_right_rotation(map, sibling);
-					sibling = parent->right;
-				}
-				sibling->black = parent->black;
-				parent->black = true;
-				sibling->right->black = true;
-				cmap_left_rotation(map, parent);
-				node = map->root;
-			}
-			else {
-				if (sibling->right->black == false &&
-				    sibling->left->black) {
-					sibling->black = false;
-					sibling->right->black = true;
-					cmap_left_rotation(map, sibling);
-					sibling = parent->left;
-				}
-				sibling->black = parent->black;
-				parent->black = true;
 				sibling->left->black = true;
-				cmap_right_rotation(map, parent);
-				node = map->root;
+				cmap_right_rotation(map, sibling);
+				sibling = parent->right;
 			}
+			sibling->black = parent->black;
+			parent->black = true;
+			sibling->right->black = true;
+			cmap_left_rotation(map, parent);
+			node = map->root;
+		}
+		else {
+			if (sibling->left->black) {
+				sibling->black = false;
+				sibling->right->black = true;
+				cmap_left_rotation(map, sibling);
+				sibling = parent->left;
+			}
+			sibling->black = parent->black;
+			parent->black = true;
+			sibling->left->black = true;
+			cmap_right_rotation(map, parent);
+			node = map->root;
 		}
 	}
-	map->root->black = true;
+	node->black = true;
 }
 
 static struct cmap_node *cmap_node_successor(cmap_t *map,
@@ -307,23 +303,30 @@ bool cmap_erase(cmap_t *map, const void *key) {
 	while (*cursor != NIL) {
 		int cmp = map->cmp((*cursor)->key, key);
 		if (cmp == 0) {
-			bool erase_black = (*cursor)->black;
+			bool erase_black = false;
 			struct cmap_node *successor =
 				cmap_node_successor(map, (*cursor));
-
-			successor->parent = (*cursor)->parent;
+			struct cmap_node *erase_node = NIL;
 			if (successor != NIL) {
-				successor->left = (*cursor)->left;
-				successor->right = (*cursor)->right;
+				void *tmp = (*cursor)->key;
+				(*cursor)->key = successor->key;
+				successor->key = tmp;
+				tmp = (*cursor)->val;
+				(*cursor)->val = successor->val;
+				successor->val = tmp;
+				cursor = successor->parent->left == successor? 
+					 &successor->parent->left : &successor->parent->right;
 			}
-			cmap_node_free(*cursor);
-			*cursor = successor;
+			erase_node = (*cursor);
+			erase_black = erase_node->black;
+			(*cursor) = erase_node->left ? erase_node->left : erase_node->right;
+			(*cursor)->parent = erase_node->parent;
+			cmap_node_free(erase_node);
 			if (erase_black) {
-				printf("Fixup\n");
 				cmap_erase_fixup(map, *cursor);
 			}
 			nil_node.black = true;
-			nil_node.parent = nil_node.left = nil_node.right = NIL;
+			nil_node.parent = NIL;
 #if DEBUG == 1
 			cmap_validate(map);
 #endif
@@ -359,3 +362,4 @@ void *cmap_alloc(int (*cmp)(const void *, const void *),
 	memcpy(alloc_map, &map, sizeof(cmap_t));
 	return alloc_map;
 }
+
