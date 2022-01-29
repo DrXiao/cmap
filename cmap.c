@@ -43,6 +43,12 @@ static struct cmap_node nil_node = {.black = true,
 static int cmap_postorder(struct cmap_node *node) {
 	int leftpath = 0, rightpath = 0;
 	if (node != NIL) {
+		if ((node->left != NIL && node->left->parent != node) || 
+			(node->right != NIL && node->right->parent != node)) {
+			fprintf(stderr, 
+				"The child's parent is inequal to the actual parent\n");
+			exit(0);
+		}
 		if (node->black == false && (node->left->black == false ||
 					     node->right->black == false)) {
 			fprintf(stderr,

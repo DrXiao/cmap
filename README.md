@@ -38,12 +38,12 @@ bool (*const erase)(cmap_t *, const void *);
 void (*const destroy)(cmap_t *);
 ```
 ### TODO
-* ```erase``` is incomplete (It causes infinite loop.), and others are finished but can be improved more efficient.
-* Red-Black Tree guideline.
+* ```erase``` is incomplete (It causes memory leak when increasing the number of nodes.), and others are finished but can be improved more efficient.
+* Red-Black Tree guideline/documentation.
 * The complete documentation of the cmap.
 * Performance improvement of the cmap (More efficient implementations about all functions.)
 * Building the library of the cmap.
-* Other operators about Red-Black Tree.
+* Other operations about Red-Black Tree.
 
 ## Build
 ### Simple test files
@@ -51,19 +51,19 @@ void (*const destroy)(cmap_t *);
 	* This shows how to construct and use a cmap, and some of details has been descripted above.
 	* In this case, The types of key and value of the cmap are C string and integer, respectively.
 ```
-$ make main
+$ make main.elf
 ```
 2. Test the insertion of the cmap: [test/test1.c](test/test1.c)
 	* This program also test a cmap, whose types is identified as the cmap in [test/main.c](test/main.c)
 	* There has twelve nodes constructed by the program and input some test data from [test/test.in](test/test.in) to search the cmap and get the corresponding value.
 ```
-$ make test1
+$ make test1.elf
 ```
-3. Test the erasion of the cmap: [test/test2.c](test/test2.c) (TODO)
+3. Test the erasion of the cmap: [test/test2.c](test/test2.c)
 	* The types of the cmap is also identified as the above tests.
 	* It also has several ndoes and uses erase() method to test its the behavior.
 ```
-$ make test2
+$ make test2.elf
 ```
 * All of the above make targets will execute their binary executables automatically.
 
