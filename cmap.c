@@ -119,20 +119,21 @@ static void cmap_left_rotation(cmap_t *map, struct cmap_node *node) {
 		parent_child = &parent->left;
 	else
 		parent_child = &parent->right;
-
-	if (parent != NIL)
-		*parent_child = right;
-	else
-		map->root = right;
-	right->parent = parent;
-
+	
 	node->right = right->left;
 
 	if (right->left != NIL)
 		right->left->parent = node;
 
-	node->parent = right;
+	right->parent = parent;
+
+	if (parent != NIL)
+		*parent_child = right;
+	else
+		map->root = right;
+	
 	right->left = node;
+	node->parent = right;
 }
 
 static void cmap_right_rotation(cmap_t *map, struct cmap_node *node) {
@@ -143,19 +144,20 @@ static void cmap_right_rotation(cmap_t *map, struct cmap_node *node) {
 		parent_child = &parent->left;
 	else
 		parent_child = &parent->right;
+	
+	node->left = left->right;
+	
+	if (left->right != NIL)
+		left->right->parent = node;
+
+	left->parent = parent;
 
 	if (parent != NIL)
 		*parent_child = left;
 	else
 		map->root = left;
-	left->parent = parent;
-
-	node->left = left->right;
-	if (left->right != NIL)
-		left->right->parent = node;
-
+	left->right = node;	
 	node->parent = left;
-	left->right = node;
 }
 
 static void cmap_insert_fixup(cmap_t *map, struct cmap_node *node) {
@@ -325,7 +327,7 @@ bool cmap_erase(cmap_t *map, const void *key) {
 			}
 			erase_node = (*cursor);
 			erase_black = erase_node->black;
-			(*cursor) = erase_node->left ? erase_node->left : erase_node->right;
+			(*cursor) = erase_node->left != NIL ? erase_node->left : erase_node->right;
 			(*cursor)->parent = erase_node->parent;
 			cmap_node_free(erase_node);
 			if (erase_black) {

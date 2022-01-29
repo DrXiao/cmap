@@ -12,18 +12,19 @@ RM := rm
 MKDIR := mkdir
 FIND := find
 CP := cp
+EXEC := exec
 
 # Valgrind args
-VALGRIND_ARGS := --leak-check=full --show-leak-kinds=all
+VALGRIND_ARGS := --leak-check=full --show-leak-kinds=all --track-origins=yes -s
 
 build: $(BIN) $(BIN)/libcmap.so
 	$(CP) cmap.h $(BIN)/
 
 check:
-	$(FIND) ./ -type f -name "*.$(EXEC_FORMAT)" -exec valgrind $(VALGRIND_ARGS) {} < test/test.in \;
+	$(FIND) ./ -type f -name "*.$(EXEC_FORMAT)" -$(EXEC) valgrind $(VALGRIND_ARGS) {} < test/test.in \;
 
 clean:
-	$(FIND) ./ -type f -name "*.$(EXEC_FORMAT)" -exec $(RM) {} \;
+	$(FIND) ./ -type f -name "*.$(EXEC_FORMAT)" -$(EXEC) $(RM) {} \;
 
 $(BIN)/libcmap.so: cmap.c
 	$(CC) -shared -fPIC -o $@ $^
