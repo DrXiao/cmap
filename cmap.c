@@ -2,13 +2,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include "cmap.h"
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG == 1
 #include <stdio.h>
 #endif
 
-/*
- * C map - 	An associative array implemented by C language.
+/**
+ * C map -	An associative array implemented by C language.
  *		In C++, it is called 'map', so this implementation
  *		is called as 'C map' because it is written by C.
  *
@@ -22,8 +22,19 @@
  *	That is, There cannot link two red nodes directly.
  * 5.	Starting from any node, the path between the start and any descendant
  *	leaf must have the same number of black nodes.
- * */
+ */
 
+/**
+ * struct cmap_node - the information of a node used by cmap.
+ * @black: 	color of a node. (either red or black)
+ * @key:	key of a node.
+ * @val:	value of a node.
+ * @parent:	pointer to parent of the node.
+ * @left:	pointer to left subtree of the node.
+ * @right	pointer to right subtree of the node.
+ *
+ * A simple definition of a cmap node to imitate <map> container in C++.
+ */
 struct cmap_node {
 	bool black;
 	void *key;
@@ -31,15 +42,29 @@ struct cmap_node {
 	struct cmap_node *parent, *left, *right;
 };
 
-#define NIL &nil_node
 
+/**
+ * For the theory of red-black tree, it has a special node called NIL
+ * (or NEEL) to represent the leaf, and it has no data and is black forever.
+ * 
+ * So, here defines it for the entire implementations.
+ */
+#define NIL &nil_node
 static struct cmap_node nil_node = {.black = true,
 				    .key = NULL,
 				    .val = NULL,
 				    .parent = NIL,
 				    .left = NIL,
 				    .right = NIL};
-
+/**
+ * cmap_postorder() is used by cmap_validate() to help it to
+ * verify the correctness of a cmap object.
+ * 
+ * It checks the pointers of a cmap_node, colors between parent and children
+ * and the numbers of black nodes between the left path and right path.
+ *
+ * If it is correct at this subtree, returning the number of the black nodes.
+ */
 static int cmap_postorder(struct cmap_node *node) {
 	int leftpath = 0, rightpath = 0;
 	if (node != NIL) {
@@ -58,8 +83,8 @@ static int cmap_postorder(struct cmap_node *node) {
 		leftpath = cmap_postorder(node->left);
 		rightpath = cmap_postorder(node->right);
 		if (leftpath != rightpath) {
-			fprintf(stderr, "The length of the left path is "
-					"inequal to the right path.\n");
+			fprintf(stderr, "The path of the left is "
+					"inequal to the right.\n");
 			exit(0);
 		}
 	}
@@ -305,7 +330,6 @@ static struct cmap_node *cmap_node_successor(cmap_t *map,
 	return successor;
 }
 
-// TODO: Now this function can cause an infinte loop.
 bool cmap_erase(cmap_t *map, const void *key) {
 	struct cmap_node **cursor = &map->root;
 	while (*cursor != NIL) {
