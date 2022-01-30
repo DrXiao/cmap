@@ -34,7 +34,10 @@ struct tuple {
 
 int main(void) {
 
-	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
+	cmap_data_t key_interface = CREATE_INTERFACE(cmp, key_size_get);
+	cmap_data_t val_interface = CREATE_INTERFACE(NULL, val_size_get);
+
+	cmap_t map = cmap_init(&key_interface, &val_interface);
 
 	char buf[1024];
 

@@ -88,7 +88,7 @@ make test4.elf
 ### Complex test files
 * (To be continued)
 
-### Create library (shared object)
+### Create the library (shared object)
 * You can use the cmap by compiling its shared object to your binary exectuable, so here provides a target in makefile to create the shared object in a folder called ```bin```.
 * This target is set by deafult and It also puts the cmap.h in the folder.
 ```

@@ -17,7 +17,10 @@ size_t val_size_get(const void *val) {
 
 int main(void) {
 
-	cmap_t map = CMAP_INIT(cmp, key_size_get, val_size_get);
+	cmap_data_t key_interface = CREATE_INTERFACE(cmp, key_size_get);
+	cmap_data_t val_interface = CREATE_INTERFACE(NULL, val_size_get);
+
+	cmap_t map = cmap_init(&key_interface, &val_interface);
 
 	int val = 10;
 	map.insert(&map, "Hello", &val);
@@ -27,9 +30,10 @@ int main(void) {
 
 	map.destroy(&map);
 
-	cmap_t *alloc_map = cmap_alloc(cmp, key_size_get, val_size_get);
-
+	cmap_t *alloc_map = cmap_alloc(&key_interface, &val_interface);
+	
 	printf("%p\n", alloc_map->search(alloc_map, "Hello"));
+	
 	alloc_map->destroy(alloc_map);
 	free(alloc_map);
 
