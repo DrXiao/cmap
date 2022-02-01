@@ -5,6 +5,7 @@ EXEC_FORMAT := elf
 SRC_DIR := src
 INCLUDE_DIR := include
 TEST_DIR := test
+ADV_TEST_DIR := adv
 BIN := bin
 
 # OS env
@@ -37,6 +38,9 @@ $(BIN)/libcmap.so: cmap.c
 	$(CC) -c $(CFLAG) -o $@ $^ -I./
 
 %.o: $(TEST_DIR)/%.c
+	$(CC) -c $(CFLAG) -o $@ $^ -I./
+
+%.o: $(ADV_TEST_DIR)/%.c
 	$(CC) -c $(CFLAG) -o $@ $^ -I./
 
 $(BIN):

@@ -35,7 +35,7 @@ int main(void) {
 	printf("%p\n", alloc_map->search(alloc_map, "Hello"));
 	
 	alloc_map->destroy(alloc_map);
-	free(alloc_map);
+	alloc_map->dealloc(alloc_map);
 
 	return 0;
 }

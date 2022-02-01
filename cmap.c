@@ -24,13 +24,37 @@
  *	leaf must have the same number of black nodes.
  */
 
+/**
+ * struct cmap_node - the information of a node used by cmap.
+ * @black: 	color of a node. (either red or black)
+ * @key:	key of a node.
+ * @val:	value of a node.
+ * @parent:	pointer to parent of the node.
+ * @left:	pointer to left subtree of the node.
+ * @right	pointer to right subtree of the node.
+ *
+ * A simple definition of a cmap node to imitate <map> container in C++.
+ */
+struct cmap_node {
+	bool black;
+	cmap_data_t key;
+	cmap_data_t val;
+	cmap_node_t *parent, *left, *right;
+
+	int (*const cmp)(cmap_node_t *, const void *);
+	void (*const insert_key)(cmap_node_t *, const void *);
+	void (*const insert_val)(cmap_node_t *, const void *);
+	void (*const destroy)(cmap_node_t *);
+	void (*const dealloc)(void *);
+};
+
+
 static cmap_node_t cmap_node_init(cmap_t *map, const void *key, const void *val);
-static int cmap_node_cmp(const void *node_ptr, const void *key); 
-static void cmap_node_def_insert_key(cmap_node_t *node, const void *key);
-static void cmap_node_def_insert_val(cmap_node_t *node, const void *val); 
+static int cmap_node_cmp(cmap_node_t *node, const void *key); 
+static void cmap_node_insert_key(cmap_node_t *node, const void *key);
+static void cmap_node_insert_val(cmap_node_t *node, const void *val); 
 static void *cmap_node_alloc(cmap_t *map, const void *key, const void *val);
 static void cmap_node_destroy(cmap_node_t *node);
-static void cmap_node_free(cmap_node_t *node);
 
 /**
  * For the theory of red-black tree, it has a special node called NIL
@@ -55,28 +79,38 @@ static cmap_node_t cmap_node_init(cmap_t *map, const void *key, const void *val)
 			    .left = NIL,
 			    .right = NIL,
 			    .cmp = cmap_node_cmp,
-			    .insert_key = cmap_node_def_insert_key,
-			    .insert_val = cmap_node_def_insert_val,
-			    .destroy = cmap_node_destroy};
+			    .insert_key = cmap_node_insert_key,
+			    .insert_val = cmap_node_insert_val,
+			    .destroy = cmap_node_destroy,
+			    .dealloc = free};
 	node.insert_key(&node, key);
 	node.insert_val(&node, val);
 	return node;
 }
 
-static int cmap_node_cmp(const void *node_ptr, const void *key) {
-	cmap_node_t *node = (cmap_node_t *)node_ptr;
+static int cmap_node_cmp(cmap_node_t *node, const void *key) {
 	return node->key.cmp(node->key.data, key);
 }
 
-static void cmap_node_def_insert_key(cmap_node_t *node, const void *key) {
+static void cmap_node_insert_key(cmap_node_t *node, const void *key) {
 	size_t new_key_size = node->key.data_size_get(key);
-	node->key.data = realloc(node->key.data, new_key_size);
+	if (node->key.data != NULL) {
+		if (node->key.destroy)
+			node->key.destroy(node->key.data);
+		node->key.dealloc(node->key.data);
+	}
+	node->key.data = calloc(1, new_key_size);
 	node->key.copy(node->key.data, key, new_key_size);
 }
 
-static void cmap_node_def_insert_val(cmap_node_t *node, const void *val) {
+static void cmap_node_insert_val(cmap_node_t *node, const void *val) {
 	size_t new_val_size = node->val.data_size_get(val);
-	node->val.data = realloc(node->val.data, new_val_size);
+	if (node->val.data != NULL) {
+		if (node->val.destroy)
+			node->val.destroy(node->val.data);
+		node->val.dealloc(node->val.data);
+	}
+	node->val.data = calloc(1, new_val_size);
 	node->val.copy(node->val.data, val, new_val_size);
 }
 
@@ -91,15 +125,16 @@ static void cmap_node_destroy(cmap_node_t *node) {
 	if (node != NIL) {
 		node->destroy(node->left);
 		node->destroy(node->right);
-		cmap_node_free(node);
+		if (node->key.destroy)
+			node->key.destroy(node->key.data);
+		if (node->val.destroy)
+			node->val.destroy(node->val.data);
+		node->key.dealloc(node->key.data);
+		node->val.dealloc(node->val.data);
+		node->dealloc(node);
 	}
 }
 
-static void cmap_node_free(cmap_node_t *node) {
-	node->key.destroy(node->key.data);
-	node->val.destroy(node->val.data);
-	free(node);
-}
 
 #if DEBUG == 1
 /**
@@ -155,12 +190,13 @@ cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface);
 void *cmap_alloc(cmap_data_t *key_interface, cmap_data_t *val_interface); 
 static void cmap_left_rotation(cmap_t *map, cmap_node_t *node);
 static void cmap_right_rotation(cmap_t *map, cmap_node_t *node); 
-void *cmap_search(cmap_t *map, const void *key);
-void cmap_insert(cmap_t *map, const void *key, const void *val); 
+static void *cmap_search(cmap_t *map, const void *key);
+static void cmap_insert(cmap_t *map, const void *key, const void *val); 
 static void cmap_insert_fixup(cmap_t *map, cmap_node_t *node);
-bool cmap_erase(cmap_t *map, const void *key); 
+static bool cmap_erase(cmap_t *map, const void *key); 
 static void cmap_erase_fixup(cmap_t *map, cmap_node_t *node); 
 static cmap_node_t *cmap_node_successor(cmap_t *map, cmap_node_t *node);
+static void cmap_destroy(cmap_t *);
 
 cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 	cmap_t map = {.root = NIL,
@@ -170,8 +206,7 @@ cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 		      .insert = cmap_insert,
 		      .erase = cmap_erase,
 		      .destroy = cmap_destroy,
-		      .insert_key = cmap_node_def_insert_key,
-		      .insert_val = cmap_node_def_insert_val};
+		      .dealloc = free};
 	map.key_interface.data = map.val_interface.data = NULL;
 	return map;
 }
@@ -345,7 +380,8 @@ bool cmap_erase(cmap_t *map, const void *key) {
 			(*cursor) = erase_node->left != NIL ? erase_node->left
 							    : erase_node->right;
 			(*cursor)->parent = erase_node->parent;
-			cmap_node_free(erase_node);
+			erase_node->left = erase_node->right = NIL;
+			erase_node->destroy(erase_node);
 			if (erase_black) {
 				cmap_erase_fixup(map, *cursor);
 			}
