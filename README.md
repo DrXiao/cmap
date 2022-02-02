@@ -36,23 +36,23 @@ void *(*const search)(cmap_t *, const void *);
 void (*const insert)(cmap_t *, const void *, const void *);
 bool (*const erase)(cmap_t *, const void *);
 void (*const destroy)(cmap_t *);
+void (*const dealloc)(void *);
 ```
 ### TODO
 * All of functions are finished but can be improved more efficient.
 * Red-Black Tree guideline/documentation.
 * The complete documentation of the cmap.
 * Performance improvement of the cmap (More efficient implementations about all functions.)
-* Building the library of the cmap.
 * Other operations about Red-Black Tree.
 
 ## Build
 * The following are the test files to validate the correctness of the cmap.
 * If you want to test them, please modify the value of the macro ```DEBUG``` to be 1 in [cmap.c](cmap.c)
 ```c
-// Before
+// Release mode
 #define DEBUG 0
 
-// After
+// Debug mode
 #define DEBUG 1
 ```
 ### Simple test files
@@ -82,12 +82,29 @@ make test3.elf
 5. More complex erasions: [test/test4.c](test/test4.c)
 	* It also inserts all data from [test/test.in](test/test.in), then removing all of them from the cmap object.
 ```
-make test4.elf
+$ make test4.elf
 ```
 * All of the above make targets will execute their binary executables automatically.
 ### Complex test files
-* (To be continued)
-
+1. A test file: [adv/adv1.c](adv/adv1.c)
+	* It is a relatively simple test file to test the correctness of memory allocation maintained by cmap.
+	* Its value type is C string and this file inserts a very long string for an existed key.
+		* It tests whether there has any memory error when restoring a string from short to long.
+```
+$ make adv1.elf
+```
+2. A complex data type - linked list: [adv/adv2.c](adv/adv2.c)
+	* In this case, the key and value types of cmap are integer and **linked lsit**, respectively.
+	* When you create your linked list data type, there has some details when defining the relative functions.
+		* Ex: 
+			* How to destroy entire linked list when it is not used? 
+			* How to copy a linked list from another linked list?
+		* Because of the complexity of linked list, you should use ```CREATE_INTERFACE4``` to create a
+		  complete interface to define the behaviors of all methods of ```struct cmap_data``` so that
+		  cmap can manipulate the linked list correctly.
+```
+$ make adv2.elf
+```
 ### Create the library (shared object)
 * You can use the cmap by compiling its shared object to your binary exectuable, so here provides a target in makefile to create the shared object in a folder called ```bin```.
 * This target is set by deafult and It also puts the cmap.h in the folder.
