@@ -49,6 +49,18 @@ struct cmap_node {
 };
 
 
+/* 
+ * Functions for struct cmap_node
+ * 
+ * cmap_node_init(): 		Constructor(Initialization) for a cmap node.
+ * cmap_node_cmp():		Comparsion between the key of a cmap node and another key.
+ * cmap_node_insert_key():	Insert a new key into the key field of a given cmap node.
+ * cmap_node_insert_val():	Insert a new value into the val field of a given cmap node.
+ * cmap_node_alloc():		Allocation for a cmap node.
+ * cmap_destroy():		Destructor for a given cmap node.
+ *
+ * All details about the above functions are mentioned at their implementation places.
+ */
 static cmap_node_t cmap_node_init(cmap_t *map, const void *key, const void *val);
 static int cmap_node_cmp(cmap_node_t *node, const void *key); 
 static void cmap_node_insert_key(cmap_node_t *node, const void *key);
@@ -71,6 +83,23 @@ static cmap_node_t nil_node = {.black = true,
 			       .right = NIL,
 			       .destroy = cmap_node_destroy};
 
+/**
+ * cmap_node_init - constructor of cmap node.
+ * @map:	an object of cmap.
+ * @key:	the given key inserted into the node.
+ * @val:	the given value inseted into the node.
+ * 
+ * This is the constructor for the struct (or class, in the OOP opinion) cmap node.
+ * Except for key and val, the resaon why needs to pass a cmap object into the function is
+ * assigning the methods' implementations, whcih are provided by a cmap object, for key and 
+ * value in a cmap node object.
+ *
+ * So, a cmap node can manipulate key and value like objects to use the given methods such as 
+ * cmp() or copy() to do the relevant and needed operations.
+ *
+ * A cmap node is also used as an object so there has some function pointers, whcih are assigned
+ * the specific functions, in a cmap node and.
+ */
 static cmap_node_t cmap_node_init(cmap_t *map, const void *key, const void *val) {
 	cmap_node_t node = {.black = false,
 			    .key = map->key_interface,
@@ -88,10 +117,30 @@ static cmap_node_t cmap_node_init(cmap_t *map, const void *key, const void *val)
 	return node;
 }
 
+/**
+ * cmap_node_cmp - doing comparsion between the key of a node and another key.
+ * 
+ * Because of involving comparsion of keys when searching, inserting and deleting,
+ * this function, also being a method of a cmap node, is calling cmp() method of the 
+ * key in the cmap node to compare another key, then returning its result..
+ */
 static int cmap_node_cmp(cmap_node_t *node, const void *key) {
 	return node->key.cmp(node->key.data, key);
 }
 
+/**
+ * cmap_node_insert_key - inserting a given key into a cmap node.
+ * @node:	an object of a cmap node.
+ * @key:	a given key.
+ *
+ * This is a method of a cmap node.
+ * The bahavior is that deallocates the original data in the cmap node 
+ * (Actually, it always has no data because every new key doesn't exist in
+ * the cmap object before inserting.)
+ * then allocating an appropriate size for the new data.
+ * Finally, copying the data from a given key to the key of the cmap node by
+ * calling copy() method of the key.
+ */
 static void cmap_node_insert_key(cmap_node_t *node, const void *key) {
 	size_t new_key_size = node->key.data_size_get(key);
 	if (node->key.data != NULL) {
@@ -103,6 +152,21 @@ static void cmap_node_insert_key(cmap_node_t *node, const void *key) {
 	node->key.copy(node->key.data, key, new_key_size);
 }
 
+/**
+ * cmap_node_insert_val - inserting a given value into a cmap node.
+ * @node:	an object of a cmap node.
+ * @val:	a given value.
+ *
+ * This is a method of a cmap node.
+ * The bahavior is that deallocates the original data in the cmap node 
+ * 
+ * Because insertig a new value are happened when inserting a new key or updating 
+ * a new value for an existed key.
+ * For the later situation, it must clear the previously old value before inserting 
+ * the new value. Therefore, this function, which acts as cmap_node_insert_key() but has 
+ * the important difference mentioned before, deallocates the original data then allocate
+ * and copy the new data of a given value.
+ */
 static void cmap_node_insert_val(cmap_node_t *node, const void *val) {
 	size_t new_val_size = node->val.data_size_get(val);
 	if (node->val.data != NULL) {
@@ -114,6 +178,16 @@ static void cmap_node_insert_val(cmap_node_t *node, const void *val) {
 	node->val.copy(node->val.data, val, new_val_size);
 }
 
+/**
+ * cmap_node_alloc - allocating an cmap node object.
+ * @map:	a cmap object.
+ * @key:	a given key	
+ * @val:	a given value
+ * 
+ * Needed to store cmap nodes dynamically, A cmap object creates a cmap node object by
+ * calling this function to allocate a cmap node.
+ * It calls calloc() and cmap_node_init() to allocate and initialize a cmap node object.
+ */
 static void *cmap_node_alloc(cmap_t *map, const void *key, const void *val) {
 	cmap_node_t node = cmap_node_init(map, key, val);
 	cmap_node_t *alloc_node = calloc(1, sizeof(cmap_node_t));
@@ -121,6 +195,18 @@ static void *cmap_node_alloc(cmap_t *map, const void *key, const void *val) {
 	return alloc_node;
 }
 
+/**
+ * cmap_node_destroy - destructor for cmap node.
+ * @node:	an object of cmap node.
+ * 
+ * Created by allocation, the way to destroy a cmap node is calls
+ * a recursive function to deallocate its left and right subtrees then
+ * destroy itself.
+ *
+ * The process is a postorder traversal and destroies and deallocates key and 
+ * value objects, which may be given destroy() implementations by user, then
+ * the node calls dealloc() method to free itself.
+ */
 static void cmap_node_destroy(cmap_node_t *node) {
 	if (node != NIL) {
 		node->destroy(node->left);
