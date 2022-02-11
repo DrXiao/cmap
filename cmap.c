@@ -160,7 +160,7 @@ static void cmap_node_insert_key(cmap_node_t *node, const void *key) {
  * This is a method of a cmap node.
  * The bahavior is that deallocates the original data in the cmap node 
  * 
- * Because insertig a new value are happened when inserting a new key or updating 
+ * Because insertig a new value are occurred when inserting a new key or updating 
  * a new value for an existed key.
  * For the later situation, it must clear the previously old value before inserting 
  * the new value. Therefore, this function, which acts as cmap_node_insert_key() but has 
@@ -272,6 +272,23 @@ static void cmap_validate(cmap_t *map) {
 }
 #endif
 
+/* 
+ * Functions for cmap
+ * 
+ * cmap_init():			Constructor of cmap.
+ * cmap_alloc():		Allocation of a cmap object.
+ * cmap_left_rotation():	Left rotation for a cmap object and its certain node.
+ * cmap_right_rotation():	Right rotation for a cmap object and its certain node.
+ * cmap_search():		The search function for cmap by given key.
+ * cmap_insert():		Inserting the given key and value into a cmap object.
+ * cmap_insert_fixup():		Fixup function for a cmap object after inserting a new node.
+ * cmap_erase():		Erasing a node with the assigned key from a cmap object.
+ * cmap_erase_fixup():		Fixup function for a cmap object after erasing a node.
+ * cmap_node_successor():	Finding the successor for a node in a cmap object.
+ * cmap_destroy():		Destructor of cmap.
+ *
+ * All details about the above functions are mentioned at their implementation places.
+ */
 cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface); 
 void *cmap_alloc(cmap_data_t *key_interface, cmap_data_t *val_interface); 
 static void cmap_left_rotation(cmap_t *map, cmap_node_t *node);
@@ -284,6 +301,14 @@ static void cmap_erase_fixup(cmap_t *map, cmap_node_t *node);
 static cmap_node_t *cmap_node_successor(cmap_t *map, cmap_node_t *node);
 static void cmap_destroy(cmap_t *);
 
+/**
+ * cmap_init - constructor of cmap 
+ * @key_interface:	an object of cmap_data type with defined implementation assigned by user for key.
+ * @val_interface:	an object of cmap_data type with defiend implementation assigned by user for value.
+ * 
+ * This function initializes a cmap object, which contains key's and value's methods, 
+ * then returning the object.
+ */
 cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 	cmap_t map = {.root = NIL,
 		      .key_interface = *key_interface,
@@ -297,6 +322,14 @@ cmap_t cmap_init(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 	return map;
 }
 
+/**
+ * cmap_alloc - allocation for an cmap object.
+ * @key_interface:	an object of cmap_data type with defined implementation assigned by user for key.
+ * @val_interface:	an object of cmap_data type with defiend implementation assigned by user for value.
+ * 
+ * It allocates a cmap object by malloc() and cmap_init() calls and returns the address
+ * of the allocated object.
+ */
 void *cmap_alloc(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 	cmap_t map = cmap_init(key_interface, val_interface);
 	cmap_t *alloc_map = malloc(sizeof(cmap_t));
@@ -304,6 +337,13 @@ void *cmap_alloc(cmap_data_t *key_interface, cmap_data_t *val_interface) {
 	return alloc_map;
 }
 
+/**
+ * cmap_left_rotation - left rotation at a node in a cmap object.
+ * @map:	an object of cmap.
+ * @node:	a node in the cmap object @map.
+ * 
+ * Rotating left counterclockwise for a node object in a cmap object.
+ */
 static void cmap_left_rotation(cmap_t *map, cmap_node_t *node) {
 	cmap_node_t *parent = node->parent;
 	cmap_node_t *right = node->right;
@@ -329,6 +369,13 @@ static void cmap_left_rotation(cmap_t *map, cmap_node_t *node) {
 	node->parent = right;
 }
 
+/**
+ * cmap_right_rotation - right rotation at a node in a cmap object.
+ * @map:	an object of cmap.
+ * @node:	a node in the cmap object @map.
+ * 
+ * Rotating right counterclockwise for a node object in a cmap object.
+ */
 static void cmap_right_rotation(cmap_t *map, cmap_node_t *node) {
 	cmap_node_t *parent = node->parent;
 	cmap_node_t *left = node->left;
@@ -353,6 +400,15 @@ static void cmap_right_rotation(cmap_t *map, cmap_node_t *node) {
 	node->parent = left;
 }
 
+/**
+ * cmap_search - searching the value by the given key.
+ * @map:	The target cmap instance, which is wanted to be searched.
+ * @key:	The target key wanted to be found in the cmap instance @map.
+ * 
+ * It does binary search in a cmap object for the target key,
+ * thening returning either the pointer to the corresponding value 
+ * or NULL pointer if the key is found or not found, respectively.
+ */
 void *cmap_search(cmap_t *map, const void *key) {
 	cmap_node_t **cursor = &map->root;
 	while (*cursor != NIL) {
@@ -367,6 +423,20 @@ void *cmap_search(cmap_t *map, const void *key) {
 	return NULL;
 }
 
+/**
+ * cmap_insert - inserting the given key and value into a cmap object,
+ *		 or updating the value for the existed key in a cmap object.
+ * @map:	the target map wanted to inserted the data.
+ * @key:	the target key, whcih may be wanted to be inserted.
+ * @value:	the target value wanted to inserted or updated.
+ * 
+ * This function searchs the given key by binary search.
+ * If the key is found, it will update the corresponding value.
+ * else, it will allocate a new node containing the key and value
+ * and insert it into the cmap object.
+ * If it conducts insertion, it will calls cmap_insert_fixup() to
+ * do the fixup process.
+ */
 void cmap_insert(cmap_t *map, const void *key, const void *val) {
 	cmap_node_t *prev_node = NIL;
 	cmap_node_t **cursor = &map->root;
@@ -395,6 +465,19 @@ INSERT_END:
 	return;
 }
 
+/**
+ * cmap_insert_fixup - Fixup the imbalance after inserting a node into a cmap object.
+ * @map:	the cmap object being imbalance after inserting.
+ * @node:	the target node being fixup.
+ * 
+ * After insertion, a cmap object may be imbalance because of breaking
+ * the rules of Red-Black Tree. Therefore, it must conduct the fixup process
+ * for the insertion and maintain the cmap object to be complied the rules.
+ * 
+ * It has three situations needed to be fixed and they have 
+ * correspoding strategies to be repaired.
+ * They are showed in the documentation of this repository.
+ */
 static void cmap_insert_fixup(cmap_t *map, cmap_node_t *node) {
 	while (node->parent->black == false) {
 		cmap_node_t *parent = node->parent;
@@ -441,6 +524,21 @@ static void cmap_insert_fixup(cmap_t *map, cmap_node_t *node) {
 	map->root->black = true;
 }
 
+/**
+ * cmap_erase - erasing a node with specific key from a cmap object.
+ * @map:	the target cmap object wanted to be erased a node.
+ * @key:	the target key.
+ * 
+ * It searchs the given key in a cmap object and removes the node with
+ * the key if it is existed. Otherwise, it does nothing.
+ *
+ * If the erasion is certain to be conducted, it will find the successor
+ * for the node and changes their data (key and value), then erasing
+ * the successor with the specific key after changing rather than the
+ * original node with the key.
+ * It will calls cmap_erase_fixup() to do fixup process for the erasion
+ * if it occurs.
+ */
 bool cmap_erase(cmap_t *map, const void *key) {
 	cmap_node_t **cursor = &map->root;
 	while (*cursor != NIL) {
@@ -486,6 +584,19 @@ bool cmap_erase(cmap_t *map, const void *key) {
 	return false;
 }
 
+/**
+ * cmap_erase_fixup - Fixup the imbalance after erasing a node into a cmap object.
+ * @map:	the cmap object being imbalance after erasing.
+ * @node:	the target node being fixup.
+ * 
+ * After erasion, a cmap object may be imbalance because of breaking
+ * the rules of Red-Black Tree. Therefore, it must conduct the fixup process
+ * for the erasion and maintain the cmap object to be complied the rules.
+ * 
+ * It has four situations needed to be fixed and they have 
+ * correspoding strategies to be repaired.
+ * They are showed in the documentation of this repository.
+ */
 static void cmap_erase_fixup(cmap_t *map, cmap_node_t *node) {
 
 	while (node != map->root && node->black) {
@@ -539,6 +650,17 @@ static void cmap_erase_fixup(cmap_t *map, cmap_node_t *node) {
 	node->black = true;
 }
 
+/**
+ * cmap_node_successor - finding the successor for a cmap node instance in a cmap object.
+ * @map:	a cmap instance.
+ * @node:	a node, in the cmap instance @map, 
+ *		wanted to be found the successor.
+ * 
+ * For cmap_erase() behavior, it must find the successor for the target 
+ * node wanted to be erased and change the data (key and value) between
+ * the successor and target node, then erasing the successor.
+ * So, this function returns the successor for the given node in a cmap object.
+ */
 static cmap_node_t *cmap_node_successor(cmap_t *map, cmap_node_t *node) {
 	cmap_node_t *successor = node->right;
 	while (successor->left != NIL)
@@ -546,6 +668,16 @@ static cmap_node_t *cmap_node_successor(cmap_t *map, cmap_node_t *node) {
 	return successor;
 }
 
+/**
+ * cmap_destroy - destructor of cmap.
+ * @map:	the target cmap instance wanted to be destroied.
+ * 
+ * If a cmap instance is not used at a certain monment, user should
+ * use the method destroy(), whcih is pointed to cmap_destroy(), to
+ * destroy the cmap object.
+ * For the field root in a cmap instance, whcih is an instance of cmap node, 
+ * it calls its destroy() to destroy the entire tree and points to NIL.
+ */
 void cmap_destroy(cmap_t *map) {
 	map->root->destroy(map->root);
 	map->root = NIL;
