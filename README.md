@@ -7,7 +7,7 @@
 * cmap is an implementation with OOP style; when using cmap, you must manipulate it as an 'object' in any OOP language.
 
 ## Usage
-* Before using cmap, you have to define the three functions with the specific types by yourself.
+* Before using cmap, you have to define the three functions with the specific types by yourself at least.
 ```c
 // A comparator for keys of Red-Black Tree.
 int cmp(const void *key1, const void *key2) {
@@ -44,6 +44,9 @@ void (*const dealloc)(void *);
 * The complete documentation of the cmap.
 * Performance improvement of the cmap (More efficient implementations about all functions.)
 * Other operations about Red-Black Tree.
+### Documentation
+[red-black-tree.md](doc/red-black-tree.md)
+[cmap.md](doc/cmap.md)
 
 ## Build
 * The following are the test files to validate the correctness of the cmap.
