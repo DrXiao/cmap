@@ -164,7 +164,7 @@ static void cmap_node_insert_key(cmap_node_t *node, const void *key) {
  * a new value for an existed key.
  * For the later situation, it must clear the previously old value before inserting 
  * the new value. Therefore, this function, which acts as cmap_node_insert_key() but has 
- * the important difference mentioned before, deallocates the original data then allocate
+ * the important difference mentioned before, deallocates the original data and then allocate
  * and copy the new data of a given value.
  */
 static void cmap_node_insert_val(cmap_node_t *node, const void *val) {
@@ -201,10 +201,10 @@ static void *cmap_node_alloc(cmap_t *map, const void *key, const void *val) {
  * 
  * Created by allocation, the way to destroy a cmap node is calls
  * a recursive function to deallocate its left and right subtrees then
- * destroy itself.
+ * destroying itself.
  *
  * The process is a postorder traversal and destroies and deallocates key and 
- * value objects, which may be given destroy() implementations by user, then
+ * value objects, which may be given destroy() implementations by user, and then
  * the node calls dealloc() method to free itself.
  */
 static void cmap_node_destroy(cmap_node_t *node) {
