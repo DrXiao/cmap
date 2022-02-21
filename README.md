@@ -45,8 +45,8 @@ void (*const dealloc)(void *);
 * Performance improvement of the cmap (More efficient implementations about all functions.)
 * Other operations about Red-Black Tree.
 ### Documentation
-[red-black-tree.md](doc/red-black-tree.md)
-[cmap.md](doc/cmap.md)
+* [red-black-tree.md](https://hackmd.io/HqBMlh2FRZSuO9oJGkOTbw)
+* [cmap.md](doc/cmap.md)
 
 ## Build
 * The following are the test files to validate the correctness of the cmap.
