@@ -73,7 +73,7 @@ $ make test1.elf
 ```
 3. Test the erasion of the cmap: [test/test2.c](test/test2.c)
 	* The types of the cmap is also identified as the above tests.
-	* It also has several ndoes and uses erase() method to test its the behavior.
+	* It also has several ndoes and uses erase() method to test its behavior.
 ```
 $ make test2.elf
 ```
