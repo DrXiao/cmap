@@ -3,7 +3,7 @@
 * This is an implementation of an associative array. it is similar as C++ ```<map>``` but it is implemented by C; thus, this repo calls it **cmap** (C's ```<map>```).
 
 ## Implementation
-* The goal of this repo is providing a binary search tree for the programmers using C language to work on thier projects. But, here is only a simple implementation of **Red-Black Tree**, which is known as a **self-balancing binary search tree**, and hopes it can be a helpful data structure for the projects written by C language.
+* The goal of this repo is providing a binary search tree for the programmers using C language to work on their projects. But, here is only a simple implementation of **Red-Black Tree**, which is known as a **self-balancing binary search tree**, and hopes it can be a helpful data structure for the projects written by C language.
 * cmap is an implementation with OOP style; when using cmap, you must manipulate it as an 'object' in any OOP language.
 
 ## Usage
@@ -97,7 +97,7 @@ $ make test4.elf
 $ make adv1.elf
 ```
 2. A complex data type - linked list: [adv/adv2.c](adv/adv2.c)
-	* In this case, the key and value types of cmap are integer and **linked lsit**, respectively.
+	* In this case, the key and value types of cmap are integer and **linked list**, respectively.
 	* When you create your linked list data type, there has some details when defining the relative functions.
 		* Ex: 
 			* How to destroy entire linked list when it is not used? 
