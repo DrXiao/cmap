@@ -1,0 +1,279 @@
+<h1>Document of Red black tree</h1>
+
+<h2>Catelog</h2>
+
+<ol>
+<li>Introduction
+<ol>
+<li>Binary Search Tree (BST)</li>
+<li>Self-Balancing Binary Search Tree</li>
+<li>Terminologies</li>
+<li>Associative array</li>
+<li>Red black tree </li>
+</ol></li>
+<li>Rotation
+<ol>
+<li>Why does it need rotation?</li>
+<li>Left Rotation</li>
+<li>Right Rotation</li>
+</ol></li>
+<li>Insertion
+<ol>
+<li>Insertion Rules</li>
+<li>Fixup for Insertion
+<ol>
+<li>Case 1</li>
+<li>Case 2</li>
+<li>Case 3</li>
+</ol></li>
+</ol></li>
+<li>Erasion
+<ol>
+<li>Erasion Strategies</li>
+<li>Fixup for Erasion
+<ol>
+<li>Case 1</li>
+<li>Case 2</li>
+<li>Case 3</li>
+<li>Case 4</li>
+</ol></li>
+</ol></li>
+<li>Manipulations of Red black tree</li>
+<li>Reference
+<h2>1. Introduction</h2></li>
+</ol>
+
+<h3>1.1 Binary Search Tree (BST)</h3>
+
+<p>In computer science, a <strong>binary search tree</strong> is a <strong>binary tree</strong> data structure that each internal node stores a key greater than all the keys in the node's left subtree and less than those in its right subtree.</p>
+
+<p>It is also called <strong>ordered</strong>/<strong>sorted</strong> binary tree so that it can provide <strong>search</strong> function to find a particular key in the tree. (That is why we calls it binary search tree.)</p>
+
+<p><img src="image/fig1-1-1.png" alt="" title="" />
+* <strong>fig1-1-1</strong>: A simple binary search tree.</p>
+
+<p>For an ideal binary search tree, whose height is logarithm of number of nodes in the tree, the operations including insert, delete and search have a best time complexity $O(log(n))$.</p>
+
+<h3>1.2 Self-Balancing Binary Search Tree</h3>
+
+<p>If it has no optimization for a binary search tree, it may occur <strong>imbalance</strong> in the tree.</p>
+
+<p>For example, Assume that we create an empty tree and insert some data(or keys) in order, the bianry search tree will be a <strong>skewed tree</strong> then causing the time complexity of operations, such as insert, delete and search, becomes $O(n)$. When it occurs, it is an <strong>imbalanced</strong> binary search tree. <strong>Notice that imbalance may occur after insertion or deletion</strong>.</p>
+
+<p><img src="image/fig1-2-1.png" alt="" title="" />
+* <strong>fig1-2-1</strong>: A skewed tree. If it inserts the data ${10, 13, 23, 39, 50}$ into an empty BST in order, the BST will be a bad data structure with time complexity $O(n)$ for BST operations.</p>
+
+<p>To solve imbalance, <strong>self-balancing</strong> binary search tree has been derived from binary search tree. <strong>Self-balancing</strong> binary search tree is also a binary search tree but it keeps its height as small as possible when any arbitrary insertions and deletions happens. So, the tree can always be balanced and have the time complexity $O(log(n))$ for the operations mentioned in the previous paragraph.</p>
+
+<p><img src="image/fig1-2-2.png" alt="" title="" />
+* <strong>fig1-2-2</strong>: An example of balancing. If imbalance occurs, the tree will adjust itself by its balance rules.</p>
+
+<p>Every self-balancing BST has its own balance rules to maintain itself; here lists some known self-balancing BST for reference.
+* AVL tree
+* 2-3 tree
+* B-tree
+* <strong>Red black tree</strong> (The main tree in this repo.)
+* Treap
+* Weight-balanced tree</p>
+
+<h3>1.3 Terminologies</h3>
+
+<p>Because it mentions binary tree concepts in this document, users need to review the relevant terminologies about binary tree (BT). Here lists some basic terminologies.</p>
+
+<p><strong>root</strong>: The first node of a tree and it only exists one in the tree exactly.</p>
+
+<p><strong>edge</strong>: Because a tree is also a graph, so here also has the terminology <strong>edge</strong>, whcih is related to graph theory, and it is a connecting link between two nodes.</p>
+
+<p><strong>leaf</strong>: The node having no child is called <strong>leaf</strong>, and is also called <strong>terminal node.</strong></p>
+
+<p><strong>internal node</strong>: It is inverse to leaf. The node having at least one child is called <strong>internal node.</strong></p>
+
+<p><img src="image/fig1-3-1.png" alt="" title="" /></p>
+
+<h2>* <strong>fig1-3-1</strong>: Illustration for root, edge, internal nodes and leaves.</h2>
+
+<p><strong>parent</strong>: Except for root node, for a tree structure, every node in a tree must be derived from another node, which is called <strong>parent</strong> node for the node.</p>
+
+<p><strong>child</strong>: It is corresponding to parent; If a node derives another node, then the derived node is called <strong>child</strong> for the node.</p>
+
+<p><strong>siblings</strong>: If certain nodes have same parent, they are called <strong>sibling</strong> for each other. For a BT, every node must have at most one sibling node exactly.</p>
+
+<p><img src="image/fig1-3-2.png" alt="" title="" /></p>
+
+<h2>* <strong>fig1-3-2</strong>: Illustration for parent, children and sibling for node 15.</h2>
+
+<p><strong>path</strong>: the sequence of nodes and edges from one node to another node is called as <strong>path</strong> between that two nodes.</p>
+
+<p><strong>height</strong>: the total number of edges from leaf node to a particular node in the longest path is called as <strong>height</strong> of that node.</p>
+
+<p><img src="image/fig1-3-3.png" alt="" title="" /></p>
+
+<h2>* <strong>fig1-3-3</strong>: Illustration for path and height</h2>
+
+<p><strong>subtree</strong>: For every node, if it is removed, then it will form two <strong>subtrees</strong>, whose roots are the children of the removed node.</p>
+
+<p><img src="image/fig1-3-4.png" alt="" title="" />
+* <strong>fig1-3-4</strong>: Illustration for subtrees. If it removes 20, two subtrees are formed and have roots 15 and 25, respectively.</p>
+
+<h3>1.4 Associatve array</h3>
+
+<p><strong>Associative array</strong>, which is also known as map, symbol table or dictionary, is an abstract data type storing a collection of (key, value) pairs, and each possible key just appears at most once.
+By associative array, we can use "mapping" to find the association between a key and a value or build a new assoiciation.</p>
+
+<p>For example: When searching a English dictionary, we often want to find the explanation of a vocabulary, and a simple English dictionary may be like the following form.</p>
+
+<p><code>
+{
+    "translation": "a process that translates something from one language to another.",
+    "search": "to look somewhere carefully to find something",
+    "survey": "an examination of opinions, behavior, etc."
+}
+</code>
+* a simple English dictionary that has vocabularies and their explanations.</p>
+
+<p>For the English dictionary, in computer science, we can store the vocabularies and explanations by building an associative array, containing key and value with string type, to stores the English dictionary.</p>
+
+<p>Then, the associative array often has the following operations:
+* <code>insert(key, value)</code>: builds a new association with <code>key</code> and <code>value</code>.
+* <code>update(key, value)</code>: rebuild the association for the existed <code>key</code> and new <code>value</code>.
+    * <code>update</code> can be integrated in the <code>insert</code> operation. That is, <code>insert</code> can also contain the behavior of <code>update</code>.
+* <code>search(key)</code>: search the association and return the <code>value</code> by giving the <code>key</code></p>
+
+<h3>1.5 Red black tree</h3>
+
+<p>Red black tree is a self-balancing BST that colors the nodes with red or black. The purpose of coloring the nodes is to do balancing by the number of red/black nodes.</p>
+
+<p>The red black tree has the following properties:
+1. Every node is either red or black.
+2. All leaves must be black, and the leaves are called NIL nodes
+3. A red node must have no red child node.
+4. Given a node, the paths from the node to any of its descendant NIL nodes must have the same number of black nodes.
+5. The root is black.</p>
+
+<p><img src="image/fig1-5-1.png" alt="" title="" />
+* <strong>fig1-5-1</strong>: A red black tree</p>
+
+<p>For a binary search tree, in the implementation, each node will be created by dynamic memory allocation, such as <code>malloc</code> in C or <code>new</code> in C++. However, the red black tree needs to create NIL node to reach its the property (property 2.), and NIL node doesn't have any data. If creating many NIL nodes directly after large times of insertions, it must waste considerable memory to let all terminal nodes, which contains useful data, have NIL child nodes.</p>
+
+<p>In order to save memory usage, we can just create only one NIL node and let all terminal nodes' child pointers be pointed to the NIL node. By this way, we can implement the property 2 of red black tree with very little cost of memory usage.</p>
+
+<p><img src="image/fig1-5-2.png" alt="" title="" />
+* <strong>fig1-5-2</strong>: A red black tree in the implementation. Notice that the child pointers of the terminal nodes (not NIL nodes) will be pointed to a NIL node.</p>
+
+<h2>2. Rotation</h2>
+
+<h3>2.1 Why does it need rotation?</h3>
+
+<p>For any self-balancing BST, how does it keep its height by itself? The most common way is to do <strong>rotation</strong>. When imbalance occurs, self-balancing BST will check a certain node, and change the parent-child relationship between it and its children so that the height of the self-balancing BST can be reduced. Finally, by rotation, the BST can be balanced.</p>
+
+<p>There have two ways to do rotation: left rotation and right rotation!</p>
+
+<h3>2.2 Left Rotation</h3>
+
+<p>Left rotation means that changes the parent-child relationship of a node by <strong>counterclockwise rotation</strong>.</p>
+
+<p>Here shows fig1-1-1 again and let it add a new node with value 48.</p>
+
+<p><img src="image/fig1-1-1.png" alt="" title="" />
+* <strong>fig1-1-1</strong> in the section 1-1</p>
+
+<p><img src="image/fig2-2-1.png" alt="" title="" />
+* <strong>fig2-2-1</strong>: Add a new node with value 48 to the binary search tree in fig1-1-1.</p>
+
+<p>When viewing the root node in fig2-2-1, you can observe that the heights between the left subtree and right subtree are different (the left subtree is 1 and right is 2.), and the imbalance occurs!
+For this situation, we can do the rotation for the node 25 to let the tree be balance.</p>
+
+<p><img src="image/fig2-2-2.png" alt="" title="" />
+* <strong>fig2-2-2</strong>: From the node 25, rotating it by counterclockwise.</p>
+
+<p><img src="image/fig2-2-3.png" alt="" title="" />
+* <strong>fig2-2-3</strong>: The balanced BST after the rotation in fig2-2-2.</p>
+
+<p>Now, here shows a more general situation to describe the entire process of rotation.</p>
+
+<p><img src="image/fig2-2-4.png" alt="" title="" />
+* <strong>fig2-2-4</strong>: A partial BST.</p>
+
+<p>The image fig2-2-4 imagines there has a huge BST after many insertions or deletions. Then, the image just focuses on the certain part and draw the adjancent nodes in a BST.
+Next, you can see the 3 red edges in fig2-2-4, and there have four nodes {A, B, D, E} which are linked by the red edges. So, how to do the left rotation? The answer is <strong>changing the links between the four nodes {A, B, D, E}</strong>.</p>
+
+<p>The following steps show the entire process of left rotation and it will look at the node B to rorate and means "left rotation for the node B".
+1. Let the node D be the child of node A.</p>
+
+<p><img src="image/fig2-2-5-1-1.png" alt="" title="" />
+* <strong>fig2-2-5-1-1</strong>: the illustration of rebuilding the links between A, B and D.</p>
+
+<p><img src="image/fig2-2-5-1-2.png" alt="" title="" />
+* <strong>fig2-2-5-1-2</strong>: After first rebuilding, A has the new child D, and the subtree with root B is isolated temporarily.</p>
+
+<p>The above two images shows the process of rebuilding the links between A, B and D. B may be the left or right child of A, and just unlink between A and B (but, it is very important that the child is left or right and must be recorded). Then, rebuild the link between A and D to finish the first step. When linking A and D, D must be the left child if B is the left child of A before unlinking. Otherwise, D must be the right child if B is right child, originally. Finally, the link between B and D will also be deleted.</p>
+
+<ol>
+<li>Let the node B has the child E.</li>
+</ol>
+
+<p><img src="image/fig2-2-5-2-1.png" alt="" title="" />
+* <strong>fig2-2-5-2-1</strong>: the illustration of rebuilding the links between B, D and E.</p>
+
+<p><img src="image/fig2-2-5-2-2.png" alt="" title="" />
+* <strong>fig2-2-5-2-2</strong>: After the second rebuilding, B has the new child E, and the subtree with root B is still isolated temporarily.</p>
+
+<p>Second, Let's rebuild the links between B, D and E. After the first step, B has lost its right child, and then let the E be the B's right child and cancel the links between D and E. Finally, the B has the new child node and E has a new parent B, and D loses its left child.</p>
+
+<ol>
+<li>Let the node B be the left child of node D.</li>
+</ol>
+
+<p><img src="image/fig2-2-5-3-1.png" alt="" title="" />
+* <strong>fig2-2-5-3-1</strong>: the illustration of rebuilding the links between B and D.</p>
+
+<p><img src="image/fig2-2-5-3-2.png" alt="" title="" />
+* <strong>fig2-2-5-3-2</strong>: After the final rebuilding, the left rotation finishs and the result is showed in the image.</p>
+
+<p>Finally, let B be the left child of D. the entire process of left rotation finishs!</p>
+
+<h3>2.3 Right Rotation</h3>
+
+<p>Oppositely, right rotation changes the parent-child relationship of a node by <strong>clockwise rotation</strong>.
+The process of right rotation is oppsite to left rotation. Just inverts the operations for the steps of left rotation, the steps of right rotation will also be performed.</p>
+
+<h2>3. Insertion</h2>
+
+<h3>3.1 Insertion Rules</h3>
+
+<p>Because red black tree is also a BST, the steps of insertions is identified as a general BST insertion, <strong>but the nodes will be colored with red in the beginning</strong>.
+After the insertion, if the current red black tree violates its maintaining rules, the red black tree must be fixup.</p>
+
+<p>Now, here shows the all possible situations if the red black tree is illegal after the insertions and the fixup strategies.</p>
+
+<h3>3.2 Fixup for Insertion</h3>
+
+<h4>3.2.1 Case 1</h4>
+
+<h4>3.2.2 Case 2</h4>
+
+<h4>3.2.3 Case 3</h4>
+
+<h2>4. Erasion</h2>
+
+<h3>4.1 Erasion Strategies</h3>
+
+<h3>4.2 Fixup for Erasion</h3>
+
+<h4>4.2.1 Case 1</h4>
+
+<h4>4.2.2 Case 2</h4>
+
+<h4>4.2.3 Case 3</h4>
+
+<h4>4.2.4 Case 4</h4>
+
+<h2>5. Manipulations of Red black tree</h2>
+
+<h2>6. Reference</h2>
+
+<ul>
+<li><a href="http://www.btechsmartclass.com/data_structures/binary-tree.html">BTech Smart Class - binary-tree</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Binary_search_tree">Wiki - Binary search tree</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Self-balancing_binary_search_tree">Wiki - Self-balancing binary search tree</a></li>
+</ul>
