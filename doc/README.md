@@ -14,4 +14,4 @@ $ grip -b red-black-tree.md
 
 Or, 
 * Visual Studio Code (VSCode), a famous text editor designed by Microsoft, also can find the extension, called ````Markdown Preview Enhanced``, to skim the markdown files.
-* HackMD, a collaborative platform, can also browse the content by import the markdown files.
+* HackMD, a collaborative platform, can also browse the content by importing the markdown files.
