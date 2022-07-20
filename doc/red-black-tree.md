@@ -26,11 +26,13 @@
 5. Manipulations of Red black tree
 6. Reference
 
+\pagebreak
+
 ## 1. Introduction
 ### 1.1 Binary Search Tree (BST)
-In computer science, a **binary search tree** is a **binary tree** data structure that each internal node stores a key greater than all the keys in the node's left subtree and less than those in its right subtree.
+In computer science, a **binary search tree** is a data structure called **binary tree** that each internal node stores a key greater than all the keys in the node's left subtree and less than those in its right subtree.
 
-It is also called **ordered**/**sorted** binary tree so that it can provide **search** function to find a particular key in the tree. (That is why we calls it binary search tree.)
+It is also called **ordered**/**sorted** binary tree so that it can provide **search** function to find a particular key in the tree. (That is why we call it binary search tree.)
 
 |![](image/fig1-1-1.png)|
 |:---:|
@@ -176,6 +178,7 @@ In order to save memory usage, we can just create only one NIL node and let all 
 |**fig1-5-2**: A red black tree in the implementation. Notice that the child pointers of the terminal nodes (not NIL nodes) will be pointed to a NIL node.|
 
 
+\pagebreak
 
 ## 2. Rotation
 ### 2.1 Why does it need rotation?
@@ -302,6 +305,8 @@ Finally, let B be the left child of D. the entire process of left rotation finis
 ### 2.3 Right Rotation
 Oppositely, right rotation changes the parent-child relationship of a node by **clockwise rotation**.
 The process of right rotation is oppsite to left rotation. Just inverts the operations for the steps of left rotation, the steps of right rotation will also be performed.
+
+\pagebreak
 
 ## 3. Insertion
 ### 3.1 Insertion Rules
