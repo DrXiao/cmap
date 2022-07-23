@@ -38,14 +38,17 @@ bool (*const erase)(cmap_t *, const void *);
 void (*const destroy)(cmap_t *);
 void (*const dealloc)(void *);
 ```
+
 ### TODO
 * All of functions are finished but can be improved more efficient.
 * Red-Black Tree guideline/documentation.
 * The complete documentation of the cmap.
 * Performance improvement of the cmap (More efficient implementations about all functions.)
 * Other operations about Red-Black Tree.
-### Documentation
-* [red-black-tree.md](https://hackmd.io/HqBMlh2FRZSuO9oJGkOTbw)
+
+### [Documentation](doc/)
+* [red-black-tree.md](doc/red-black-tree.md)
+	* [red-black-tree.pdf](doc/red-black-tree.pdf)
 * [cmap.md](doc/cmap.md)
 
 ## Build

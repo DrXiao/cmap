@@ -144,9 +144,10 @@ For example: When searching a English dictionary, we often want to find the expl
 For the English dictionary, in computer science, we can store the vocabularies and explanations by building an associative array, containing key and value with string type, to stores the English dictionary.
 
 Then, the associative array often has the following operations:
+
 * insert(key, value): builds a new association with key and value.
 * update(key, value): rebuild the association for the existed key and new value.
-	* update can be integrated in the insert operation. That is, insert can also contain the behavior of update.
+	* update() can be integrated in the insert() operation. That is, insert() can also contain the behavior of update().
 * search(key): search the association and return the value by giving the key.
 
 ### 1.5 Red black tree
@@ -167,7 +168,7 @@ The red black tree has the following properties:
 
 
 
-For a binary search tree, in the implementation, each node will be created by dynamic memory allocation, such as malloc in C or new in C++. However, the red black tree needs to create NIL node to reach its the property (property 2.), and NIL node doesn't have any data. If creating many NIL nodes directly after large times of insertions, it must waste considerable memory to let all terminal nodes, which contains useful data, have NIL child nodes.
+For a binary search tree, in the implementation, each node will be created by dynamic memory allocation, such as **malloc()** in C or **new** in C++. However, the red black tree needs to create NIL node to reach its the property (property 2.), and NIL node doesn't have any data. If creating many NIL nodes directly after large times of insertions, it must waste considerable memory to let all terminal nodes, which contains useful data, have NIL child nodes.
 
 In order to save memory usage, we can just create only one NIL node and let all terminal nodes' child pointers be pointed to the NIL node. By this way, we can implement the property 2 of red black tree with very little cost of memory usage.
 
