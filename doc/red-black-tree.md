@@ -130,7 +130,7 @@ Because it mentions binary tree concepts in this document, users need to review 
 **Associative array**, which is also known as map, symbol table or dictionary, is an abstract data type storing a collection of (key, value) pairs, and each possible key just appears at most once.
 By associative array, we can use "mapping" to find the association between a key and a value or build a new assoiciation.
 
-For example: When searching a English dictionary, we often want to find the explanation of a vocabulary, and a simple English dictionary may be like the following form.
+For example: When searching an English dictionary, we often want to find the explanation of a vocabulary, and a simple English dictionary may be like the following form.
 
 ```
 {
@@ -141,7 +141,7 @@ For example: When searching a English dictionary, we often want to find the expl
 ```
 * a simple English dictionary that has vocabularies and their explanations.
 
-For the English dictionary, in computer science, we can store the vocabularies and explanations by building an associative array, containing key and value with string type, to stores the English dictionary.
+For the English dictionary, in computer science, we can store the vocabularies and explanations by building an associative array, containing key and value with string type, to store the English dictionary.
 
 Then, the associative array often has the following operations:
 
