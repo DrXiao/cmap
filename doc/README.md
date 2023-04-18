@@ -14,6 +14,6 @@ $ grip -b red-black-tree.md
 
 Or,
 * by ```pandoc``` command
-	* ```$ pandoc -V geometry:"top=2cm, bottom=1.5cm,, left=2cm, right=2cm" red-black-tree.md -o red-black-tree.pdf```
+	* ```$ pandoc -V geometry:"top=2cm, bottom=1.5cm, left=2cm, right=2cm" red-black-tree.md -o red-black-tree.pdf```
 * Visual Studio Code (VSCode), a famous text editor designed by Microsoft, also can find the extension, called ```Markdown Preview Enhanced```, to skim the markdown files.
 * HackMD, a collaborative platform, can also browse the content by importing the markdown files.

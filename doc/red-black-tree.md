@@ -317,7 +317,55 @@ After the insertion, if the current red black tree violates its maintaining rule
 Now, here shows the all possible situations if the red black tree is illegal after the insertions and the fixup strategies.
 
 ### 3.2 Fixup for Insertion
+In the section 1.5, the third rule is "A red node must have no red child node.", and then the new node will be colored with red in the beginning and will be moved to be a leaf. So, the situations have an identified point: there has two red nodes are **adjacent**.
+
+In order to explain the situations more conveniently, here defines the nodes with code name and their roles
+
+* node **A** (red): a node in the red black tree. It will have a child node X after insertion.
+* ndoe **B** (undetermined color): an another node in the red black tree. It will be X's uncle after insertion. (That is, A and B are sibling for each other.)
+* node **C** (black): the parent node having the children A and B.
+* node **D** (undetermined color): the parent node having the child C.
+* node **X** (red in the beginning): the new node inserted into the tree and becomed the A's child.
+
+|![](image/fig3-2-1.png)|
+|:---:|
+|**fig3-2-1**: An illustration of an imagined red black tree that will be inserted a node X.|
+
+Notice that X may be A's left or right node, and the mirror situations will not be discussed because their handling ways are very like the following description. (It is just inverse for all operations about left and right)
+
+|![](image/fig3-2-2.png)|
+|:---:|
+|**fig3-2-1**: A mirror situation of fig3-2-1, and this balancing way is like fig3-2-1.|
+
+Then, the situations are listed as following:
+
 #### 3.2.1 Case 1
+
+* Node B (uncle) is red, and the new node X is left or right child of node A.
+
+|![](image/fig3-2-1-1.png)|
+|:---:|
+|**fig3-2-1-1**: The case 1 of the violation after insertion. Notice that X can also be the left child, and here only shows the situation that X is right child|
+
+##### The fix approach
+* **Let grandparent become red and parent and uncle become black.**
+
+|![](image/fig3-2-1-2.png)|
+|:---:|
+|**fig3-2-1-1**: The result after fixup, and then the next step is fixup for the node C.|
+
+For node X, let its parent and uncle be red and the grandparent become black. So, the violation will be occurred at node C and it should continuously fix the tree until the tree is legal.
+
+Then, for node C, if node D is black, the tree will be legal. Otherwise, it should check the tree by the rules and fix the tree again.
+
+|![](image/fig3-2-1-3.png)|
+|:---:|
+|**fig3-2-1-3**: legal.|
+
+|![](image/fig3-2-1-4.png)|
+|:---:|
+|**fig3-2-1-4.png**: illegal|
+
 #### 3.2.2 Case 2
 #### 3.2.3 Case 3
 ## 4. Erasion
